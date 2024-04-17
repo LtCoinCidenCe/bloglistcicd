@@ -67,5 +67,10 @@
     "cross-env": "^7.0.3",
     "cypress": "^8.6.0",
     "eslint-plugin-cypress": "^2.12.1"
+  },
+  "jest": {
+    "testPathIgnorePatterns": [
+      "cypress"
+    ]
   }
 }

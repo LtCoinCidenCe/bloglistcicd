@@ -16,6 +16,7 @@ const app = express();
 logger.info('connecting to database');
 mongoose.connect(config.MONGODB_URI);
 
+app.use(express.static('build'));
 
 app.use(cors());
 app.use(express.json());
