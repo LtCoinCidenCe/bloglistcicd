@@ -11,6 +11,8 @@ on:
 jobs:
   bloglist_deployment_pipeline:
     runs-on: ubuntu-20.04
+    env:
+      SKIP_PREFLIGHT_CHECK: ${{ secrets.SKIP_PREFLIGHT_CHECK }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -23,6 +25,7 @@ jobs:
         run: pwd
       # - name: Lint (no linting, backend wasn't written that way back then)
       #   run: npm run eslint
+      
       - name: Build frontend
         run: npm run uibuild
       - name: Backend Test
