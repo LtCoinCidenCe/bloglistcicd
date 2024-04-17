@@ -1,0 +1,72 @@
+name: Deployment pipeline
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize]
+
+jobs:
+  bloglist_deployment_pipeline:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - uses: superfly/flyctl-actions/setup-flyctl@master
+      - name: Install dependencies
+        run: npm install --force
+      - name: Showing pwd
+        run: pwd
+      # - name: Lint (no linting, backend wasn't written that way back then)
+      #   run: npm run eslint
+      - name: Build frontend
+        run: npm run uibuild
+      - name: Backend Test
+        run: npm run test
+      - name: Set flyctl ENV
+        run: flyctl secrets set MONGODB_URI=$MONGODB_URI TEST_MONGODB_URI=$TEST_MONGODB_URI SECRET=$SECRET SKIP_PREFLIGHT_CHECK=$SKIP_PREFLIGHT_CHECK
+        env:
+          MONGODB_URI: ${{ secrets.MONGODB_URI }}
+          TEST_MONGODB_URI: ${{ secrets.TEST_MONGODB_URI }}
+          SECRET: ${{ secrets.SECRET }}
+          SKIP_PREFLIGHT_CHECK: ${{ secrets.SKIP_PREFLIGHT_CHECK }}
+      - name: Deploy
+        if: ${{ github.event_name == 'push' && !contains(join(github.event.commits.*.message),'#skip') }}
+        run: flyctl deploy --remote-only
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+      # well i watch it
+      # - name: Deployment successful
+      #   uses: rjstone/discord-webhook-notify@v1
+      #   if: ${{ success() && github.event_name == 'push' }}
+      #   with:
+      #     severity: info
+      #     details: Deployment Succeeded!
+      #     webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
+      # - name: Deployment failed
+      #   uses: rjstone/discord-webhook-notify@v1
+      #   if: ${{ failure() && github.event_name == 'push'}}
+      #   with:
+      #     severity: error
+      #     details: Deployment Failed!
+      #     webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
+        
+  tag_release:
+    needs: [bloglist_deployment_pipeline]
+    runs-on: ubuntu-20.04
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      DEFAULT_BUMP: patch
+    steps:
+      - uses: actions/checkout@v4
+      - name: Version dry run
+        uses: anothrNick/github-tag-action@1.67.0
+        env:
+          DRY_RUN: true
+      - name: Bump version and push tag
+        uses: anothrNick/github-tag-action@1.67.0
+        if: ${{ github.event_name == 'push' && !contains(join(github.event.commits.*.message),'#skip') }}
