@@ -47,16 +47,16 @@ describe('Blog app', function ()
       username: 'root',
       password: 'secret'
     };
-    cy.request('POST', 'http://localhost:3000/api/users/', user1);
+    cy.request('POST', 'http://localhost:3003/api/users/', user1);
 
     const user2 = {
       name: 'NormalUser',
       username: 'normal',
       password: 'secret'
     };
-    cy.request('POST', 'http://localhost:3000/api/users/', user2);
+    cy.request('POST', 'http://localhost:3003/api/users/', user2);
 
-    cy.visit('http://localhost:3000');
+    cy.visit('http://localhost:3003');
   });
 
   it('Login form is shown', function ()
