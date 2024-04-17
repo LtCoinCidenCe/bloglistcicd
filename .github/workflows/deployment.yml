@@ -16,6 +16,7 @@ jobs:
       TEST_MONGODB_URI: ${{ secrets.TEST_MONGODB_URI }}
       SECRET: ${{ secrets.SECRET }}
       SKIP_PREFLIGHT_CHECK: ${{ secrets.SKIP_PREFLIGHT_CHECK }}
+      FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -34,12 +35,9 @@ jobs:
         run: npm run test
       - name: Set flyctl ENV
         run: flyctl secrets set MONGODB_URI=$MONGODB_URI TEST_MONGODB_URI=$TEST_MONGODB_URI SECRET=$SECRET SKIP_PREFLIGHT_CHECK=$SKIP_PREFLIGHT_CHECK
-        
       - name: Deploy
         if: ${{ github.event_name == 'push' && !contains(join(github.event.commits.*.message),'#skip') }}
         run: flyctl deploy --remote-only
-        env:
-          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
       # well i watch it
       # - name: Deployment successful
       #   uses: rjstone/discord-webhook-notify@v1
