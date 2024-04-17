@@ -38,6 +38,7 @@ jobs:
           browser: chrome
           start: npm run startTest
           wait-on: "http://localhost:3003"
+          install-command: npm install --force
       # - name: Backend Test
       #   run: npm run test
       - name: Set flyctl ENV
