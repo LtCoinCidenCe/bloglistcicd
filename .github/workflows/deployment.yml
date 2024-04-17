@@ -12,6 +12,10 @@ jobs:
   bloglist_deployment_pipeline:
     runs-on: ubuntu-20.04
     env:
+      NODE_OPTIONS: --openssl-legacy-provider
+      MONGODB_URI: ${{ secrets.MONGODB_URI }}
+      TEST_MONGODB_URI: ${{ secrets.TEST_MONGODB_URI }}
+      SECRET: ${{ secrets.SECRET }}
       SKIP_PREFLIGHT_CHECK: ${{ secrets.SKIP_PREFLIGHT_CHECK }}
     steps:
       - uses: actions/checkout@v4
@@ -25,19 +29,13 @@ jobs:
         run: pwd
       # - name: Lint (no linting, backend wasn't written that way back then)
       #   run: npm run eslint
-      
       - name: Build frontend
         run: npm run uibuild
       - name: Backend Test
         run: npm run test
       - name: Set flyctl ENV
         run: flyctl secrets set MONGODB_URI=$MONGODB_URI TEST_MONGODB_URI=$TEST_MONGODB_URI SECRET=$SECRET SKIP_PREFLIGHT_CHECK=$SKIP_PREFLIGHT_CHECK
-        env:
-          NODE_OPTIONS: --openssl-legacy-provider
-          MONGODB_URI: ${{ secrets.MONGODB_URI }}
-          TEST_MONGODB_URI: ${{ secrets.TEST_MONGODB_URI }}
-          SECRET: ${{ secrets.SECRET }}
-          SKIP_PREFLIGHT_CHECK: ${{ secrets.SKIP_PREFLIGHT_CHECK }}
+        
       - name: Deploy
         if: ${{ github.event_name == 'push' && !contains(join(github.event.commits.*.message),'#skip') }}
         run: flyctl deploy --remote-only

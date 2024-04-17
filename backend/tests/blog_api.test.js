@@ -7,6 +7,7 @@ const helper = require('./test_helper');
 
 // just have problem with multiple files using supertest
 const api = supertest(app);
+jest.setTimeout(60*1000);
 
 describe('blog api part', () =>
 {

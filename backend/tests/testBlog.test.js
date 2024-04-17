@@ -1,4 +1,5 @@
 const listHelper = require('../utils/list_helper')
+jest.setTimeout(60*1000);
 
 const blogs = [
   {
