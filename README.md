@@ -8,3 +8,4 @@ Almost 3 years have passed.
 1. copy the backend and run everythings. mongoose dependency 6 and validator were uncompatible. Had to use --force installation
 2. mixing package.json file for 2 projects. code level
 3. force install in fly.toml and injecting ENV to flyctl
+4. NODE_OPTIONS: --openssl-legacy-provider
