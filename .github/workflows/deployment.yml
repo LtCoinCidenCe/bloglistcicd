@@ -12,7 +12,6 @@ jobs:
   bloglist_deployment_pipeline:
     runs-on: ubuntu-20.04
     env:
-      NODE_OPTIONS: --openssl-legacy-provider
       MONGODB_URI: ${{ secrets.MONGODB_URI }}
       TEST_MONGODB_URI: ${{ secrets.TEST_MONGODB_URI }}
       SECRET: ${{ secrets.SECRET }}
