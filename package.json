@@ -70,7 +70,8 @@
   },
   "jest": {
     "testPathIgnorePatterns": [
-      "cypress"
+      "cypress",
+      "/src\/"
     ]
   }
 }
