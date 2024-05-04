@@ -43,6 +43,7 @@ jobs:
       # - name: Backend Test
       #   run: npm run test
       - name: Set flyctl ENV
+        if: ${{ github.event_name == 'push' && !contains(join(github.event.commits.*.message),'#skip') }}
         run: flyctl secrets set MONGODB_URI=$MONGODB_URI TEST_MONGODB_URI=$TEST_MONGODB_URI SECRET=$SECRET SKIP_PREFLIGHT_CHECK=$SKIP_PREFLIGHT_CHECK
       - name: Deploy
         if: ${{ github.event_name == 'push' && !contains(join(github.event.commits.*.message),'#skip') }}
